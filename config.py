@@ -101,7 +101,8 @@ def test_graphAL():
     def P1(graph, u, v):
         return graph.is_there_an_edge(u, v)
 
-    section_score += grade_problem(1, [
+    try:
+        section_score += grade_problem(1, [
         ((unweighted, 0, 1), True),   # Test 1: Edge 0->1 exists
         ((unweighted, 0, 3), True),   # Test 2: Edge 0->3 exists
         ((unweighted, 2, 5), True),   # Test 3: Edge 2->5 exists
@@ -113,6 +114,10 @@ def test_graphAL():
         ((weighted, 2, 5), False),    # Test 9: No edge 2->5
         ((GraphAL(4, True), 1, 2), False) # Test 10: Empty graph → no edges
     ], P1, POINTS_PER_PROBLEM)
+    except Exception as e:
+        print(f"Problem 1 CRASHED: {e}")
+        points_by_problem.append(0.0)
+        print("Problem 1 Score: 0.0 /", POINTS_PER_PROBLEM)
 
     # -----------------------------
     # Problem 2 — compute_in_degree
@@ -120,7 +125,8 @@ def test_graphAL():
     def P2(graph, v):
         return graph.compute_in_degree(v)
 
-    section_score += grade_problem(2, [
+    try:
+        section_score += grade_problem(2, [
         ((unweighted, 0), 0),   # Test 1: No incoming edges
         ((unweighted, 1), 1),   # Test 2: One incoming edge (0->1)
         ((unweighted, 4), 1),   # Test 3: One incoming (1->4)
@@ -132,6 +138,10 @@ def test_graphAL():
         ((weighted, 5), 1),     # Test 9: Incoming from 4
         ((GraphAL(5, True), 3), 0) # Test 10: Empty graph → in-degree 0
     ], P2, POINTS_PER_PROBLEM)
+    except Exception as e:
+        print(f"Problem 2 CRASHED: {e}")
+        points_by_problem.append(0.0)
+        print("Problem 2 Score: 0.0 /", POINTS_PER_PROBLEM)
 
     # -----------------------------
     # Problem 3 — is_isolated
@@ -149,7 +159,8 @@ def test_graphAL():
 
     empty = GraphAL(5, directed=True)
 
-    section_score += grade_problem(3, [
+    try:
+        section_score += grade_problem(3, [
         ((iso_AL, 4), True),   # Test 1: No in/out edges
         ((iso_AL, 5), True),   # Test 2: Fully isolated
         ((iso_AL, 0), False),  # Test 3: Outgoing edge exists
@@ -161,6 +172,10 @@ def test_graphAL():
         ((GraphAL(1, True), 0), True), # Test 9: Single vertex isolated
         ((GraphAL(3, True), 2), True)  # Test 10: Vertex isolated
     ], P3, POINTS_PER_PROBLEM)
+    except Exception as e:
+        print(f"Problem 3 CRASHED: {e}")
+        points_by_problem.append(0.0)
+        print("Problem 3 Score: 0.0 /", POINTS_PER_PROBLEM)
 
     # -----------------------------
     # Problem 4 — highest_out_degree_vertex
@@ -171,7 +186,8 @@ def test_graphAL():
     cg = GraphAL(6, directed=True)
     cg.insert_edge(5, 1)
 
-    section_score += grade_problem(4, [
+    try:
+        section_score += grade_problem(4, [
         ((unweighted,), 0),   # Test 1
         ((weighted,), 0),     # Test 2
         ((cg,), 5),           # Test 3
@@ -183,6 +199,10 @@ def test_graphAL():
         ((GraphAL(4, True),), 0), # Test 9
         ((GraphAL(2, True),), 0)  # Test 10
     ], P4, POINTS_PER_PROBLEM)
+    except Exception as e:
+        print(f"Problem 4 CRASHED: {e}")
+        points_by_problem.append(0.0)
+        print("Problem 4 Score: 0.0 /", POINTS_PER_PROBLEM)
 
     # -----------------------------
     # Problem 5 — sorted_edge_values
@@ -192,7 +212,8 @@ def test_graphAL():
 
     emptyW = GraphAL(5, directed=True, weighted=True)
 
-    section_score += grade_problem(5, [
+    try:
+        section_score += grade_problem(5, [
         ((unweighted,), [1]*12),             # Test 1
         ((weighted,), [2,4,6,8,10]),         # Test 2
         ((emptyW,), []),                     # Test 3
@@ -204,6 +225,10 @@ def test_graphAL():
         ((cg,), [1]),                        # Test 9
         ((GraphAL(3, True),), [])            # Test 10
     ], P5, POINTS_PER_PROBLEM)
+    except Exception as e:
+        print(f"Problem 5 CRASHED: {e}")
+        points_by_problem.append(0.0)
+        print("Problem 5 Score: 0.0 /", POINTS_PER_PROBLEM)
 
     # -----------------------------
     # Problem 6 — get_adjacent_neighbors
@@ -233,7 +258,8 @@ def test_graphAL():
     gE.insert_edge(3, 1)
     gE.insert_edge(3, 4)
 
-    section_score += grade_problem(6, [
+    try:
+        section_score += grade_problem(6, [
         ((gA, 1), [0,2,4]),         # Test 1: Multi outgoing neighbors
         ((gA, 0), []),              # Test 2: No outgoing edges
         ((gB, 0), [2,3]),           # Test 3: Two neighbors
@@ -245,6 +271,10 @@ def test_graphAL():
         ((unweighted, 0), [1,2,3]), # Test 9: Main exam graph node 0
         ((unweighted, 10), [])      # Test 10: Node 10 has no outgoing edges
     ], P6, POINTS_PER_PROBLEM)
+    except Exception as e:
+        print(f"Problem 6 CRASHED: {e}")
+        points_by_problem.append(0.0)
+        print("Problem 6 Score: 0.0 /", POINTS_PER_PROBLEM)
 
     return section_score
 
@@ -294,7 +324,8 @@ def test_graphAM():
     def P7(graph, u, v):
         return graph.is_there_an_edge(u, v)
 
-    section_score += grade_problem(7, [
+    try:
+        section_score += grade_problem(7, [
         ((unweighted, 0, 1), True),    # Test 1: Edge 0->1 exists
         ((unweighted, 0, 3), True),    # Test 2: Edge 0->3 exists
         ((unweighted, 2, 5), True),    # Test 3: Edge 2->5 exists
@@ -306,6 +337,10 @@ def test_graphAM():
         ((weighted, 2, 5), False),     # Test 9: No edge 2->5
         ((GraphAM(4, True), 1, 2), False) # Test 10: Empty 4-vertex graph
     ], P7, POINTS_PER_PROBLEM)
+    except Exception as e:
+        print(f"Problem 7 CRASHED: {e}")
+        points_by_problem.append(0.0)
+        print("Problem 7 Score: 0.0 /", POINTS_PER_PROBLEM)
 
     # -----------------------------
     # Problem 8 — compute_in_degree
@@ -313,7 +348,8 @@ def test_graphAM():
     def P8(graph, v):
         return graph.compute_in_degree(v)
 
-    section_score += grade_problem(8, [
+    try:
+        section_score += grade_problem(8, [
         ((unweighted, 0), 0),  # Test 1: No incoming edges
         ((unweighted, 1), 1),  # Test 2: Incoming from 0
         ((unweighted, 4), 1),  # Test 3: Incoming from 1
@@ -326,6 +362,10 @@ def test_graphAM():
         ((weighted, 5), 1),    # Test 9: Incoming from 4
         ((GraphAM(5, True), 3), 0) # Test 10: Empty matrix graph
     ], P8, POINTS_PER_PROBLEM)
+    except Exception as e:
+        print(f"Problem 8 CRASHED: {e}")
+        points_by_problem.append(0.0)
+        print("Problem 8 Score: 0.0 /", POINTS_PER_PROBLEM)
 
     # -----------------------------
     # Problem 9 — is_isolated
@@ -343,7 +383,8 @@ def test_graphAM():
 
     empty = GraphAM(5, directed=True)
 
-    section_score += grade_problem(9, [
+    try:
+        section_score += grade_problem(9, [
         ((iso, 4), True),     # Test 1: No in/out edges
         ((iso, 5), True),     # Test 2: Fully isolated
         ((iso, 0), False),    # Test 3: Outgoing edge exists
@@ -356,6 +397,10 @@ def test_graphAM():
         ((GraphAM(1, True), 0), True), # Test 9: Single isolated vertex
         ((GraphAM(3, True), 2), True)  # Test 10: Isolated in empty graph
     ], P9, POINTS_PER_PROBLEM)
+    except Exception as e:
+        print(f"Problem 9 CRASHED: {e}")
+        points_by_problem.append(0.0)
+        print("Problem 9 Score: 0.0 /", POINTS_PER_PROBLEM)
 
     # -----------------------------
     # Problem 10 — highest_out_degree_vertex
@@ -366,7 +411,8 @@ def test_graphAM():
     cg = GraphAM(6, directed=True)
     cg.insert_edge(5, 1)
 
-    section_score += grade_problem(10, [
+    try:
+        section_score += grade_problem(10, [
         ((unweighted,), 0),  # Test 1: Node 0 highest
         ((weighted,), 0),    # Test 2: Node 0 highest
         ((cg,), 5),          # Test 3: Only node 5 has outgoing edges
@@ -378,6 +424,10 @@ def test_graphAM():
         ((GraphAM(4, True),), 0), # Test 9
         ((GraphAM(2, True),), 0)  # Test 10
     ], P10, POINTS_PER_PROBLEM)
+    except Exception as e:
+        print(f"Problem 10 CRASHED: {e}")
+        points_by_problem.append(0.0)
+        print("Problem 10 Score: 0.0 /", POINTS_PER_PROBLEM)
 
     # -----------------------------
     # Problem 11 — sorted_edge_values
@@ -387,7 +437,8 @@ def test_graphAM():
 
     emptyW = GraphAM(5, directed=True, weighted=True)
 
-    section_score += grade_problem(11, [
+    try:
+        section_score += grade_problem(11, [
         ((unweighted,), [1]*12),       # Test 1: 12 edges all weight 1
         ((weighted,), [2,4,6,8,10]),   # Test 2: Sorted weighted edges
         ((emptyW,), []),               # Test 3: No edges
@@ -399,6 +450,10 @@ def test_graphAM():
         ((cg,), [1]),                  # Test 9: One unweighted edge
         ((GraphAM(3, True),), [])      # Test 10: No edges
     ], P11, POINTS_PER_PROBLEM)
+    except Exception as e:
+        print(f"Problem 11 CRASHED: {e}")
+        points_by_problem.append(0.0)
+        print("Problem 11 Score: 0.0 /", POINTS_PER_PROBLEM)
 
     # -----------------------------
     # Problem 12 — get_adjacent_neighbors
@@ -429,7 +484,8 @@ def test_graphAM():
     AM5.insert_edge(3, 1)
     AM5.insert_edge(3, 4)
 
-    section_score += grade_problem(12, [
+    try:
+        section_score += grade_problem(12, [
         ((AM1, 1), [0,2,4]),           # Test 1: Three outgoing neighbors
         ((AM1, 0), []),                # Test 2: No outgoing neighbors
         ((AM2, 0), [2,3]),             # Test 3: Two neighbors sorted
@@ -441,6 +497,10 @@ def test_graphAM():
         ((unweighted, 0), [1,2,3]),    # Test 9: Main exam graph
         ((unweighted, 10), [])         # Test 10: No outgoing from 10
     ], P12, POINTS_PER_PROBLEM)
+    except Exception as e:
+        print(f"Problem 12 CRASHED: {e}")
+        points_by_problem.append(0.0)
+        print("Problem 12 Score: 0.0 /", POINTS_PER_PROBLEM)
 
     return section_score
 
