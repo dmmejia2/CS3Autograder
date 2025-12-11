@@ -1,0 +1,45 @@
+# Virtual Environment
+myenv/
+venv/
+env/
+.venv/
+
+# Input folder - student code should not be committed
+Input/
+*.bak
+
+# Output folder - generated files
+Output/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+.env.local
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
