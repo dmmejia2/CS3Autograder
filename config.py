@@ -510,15 +510,48 @@ def test_graphAM():
 # ---------------------------------------------------------------
 
 try:
-    al_score = test_graphAL()
-    am_score = test_graphAM()
+    # Ensure we have student info, with fallback values
+    try:
+        student_first = str(first_name)
+        student_last = str(last_name)
+        student_id_val = str(student_id)
+    except:
+        student_first = "Unknown"
+        student_last = "Unknown"
+        student_id_val = "Unknown"
+    
+    # Run both test sections, each wrapped in try-except for safety
+    try:
+        al_score = test_graphAL()
+    except Exception as e:
+        print(f"ERROR in test_graphAL: {e}")
+        al_score = 0
+        # Ensure we have 6 entries for AL problems
+        while len(points_by_problem) < 6:
+            points_by_problem.append(0.0)
+    
+    try:
+        am_score = test_graphAM()
+    except Exception as e:
+        print(f"ERROR in test_graphAM: {e}")
+        am_score = 0
+        # Ensure we have 12 entries total
+        while len(points_by_problem) < 12:
+            points_by_problem.append(0.0)
+    
+    # Ensure we have exactly 12 problem scores
+    while len(points_by_problem) < 12:
+        points_by_problem.append(0.0)
+    # Truncate if somehow we have more
+    points_by_problem = points_by_problem[:12]
+    
     final_score = al_score + am_score
 
     # CSV format: first_name,last_name,student_id,score1,...,score12,total
     csv_line = (
-        str(first_name) + "," +
-        str(last_name) + "," +
-        str(student_id) + "," +
+        student_first + "," +
+        student_last + "," +
+        student_id_val + "," +
         ",".join(str(int(score)) for score in points_by_problem) +
         "," + "{:.2f}".format(final_score)
     )
@@ -526,11 +559,20 @@ try:
     print(csv_line)
 except Exception as e:
     # If there's an error, output zeros for all problems
+    try:
+        student_first = str(first_name)
+        student_last = str(last_name)
+        student_id_val = str(student_id)
+    except:
+        student_first = "Unknown"
+        student_last = "Unknown"
+        student_id_val = "Unknown"
+    
     num_problems = 12
     csv_line = (
-        str(first_name) + "," +
-        str(last_name) + "," +
-        str(student_id) + "," +
+        student_first + "," +
+        student_last + "," +
+        student_id_val + "," +
         ",".join(["0"] * num_problems) +
         ",0.00"
     )

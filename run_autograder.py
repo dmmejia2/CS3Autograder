@@ -9,12 +9,58 @@ import json
 import textwrap
 import shutil
 import sys
+import re
 import nbformat
 from nbconvert.preprocessors import ExecutePreprocessor
 from config import (
     INPUT_DIR, OUTPUT_DIR, GRADES_CSV, 
     EXECUTION_TIMEOUT, AUTOGRADER_CODE
 )
+
+
+def extract_username_from_filename(filename):
+    """
+    Extracts username from notebook filename.
+    Expected format: "Exam Three - Part I_username_attempt_..."
+    
+    Returns:
+        str: Username or None if not found
+    """
+    try:
+        # Remove .ipynb extension
+        name = filename.replace('.ipynb', '')
+        
+        # Try to find username pattern: text_username_attempt or text_username_attempt
+        # Common patterns:
+        # - "Part I_username_attempt"
+        # - "Part I_username_attempt_"
+        # - "_username_attempt"
+        
+        # Look for pattern: _username_attempt
+        match = re.search(r'_([a-zA-Z0-9]+)_attempt', name)
+        if match:
+            return match.group(1)
+        
+        # Alternative: look for pattern after "Part I_" or similar
+        match = re.search(r'Part\s+I_([a-zA-Z0-9]+)_', name)
+        if match:
+            return match.group(1)
+        
+        # Try to find any word between underscores that looks like a username
+        # (alphanumeric, typically lowercase)
+        parts = name.split('_')
+        for i, part in enumerate(parts):
+            # Username is usually after "Part I" or similar exam identifier
+            if i > 0 and len(part) > 0 and part.isalnum() and part.islower():
+                # Check if next part is "attempt" or a date
+                if i + 1 < len(parts):
+                    next_part = parts[i + 1]
+                    if next_part == 'attempt' or (len(next_part) > 4 and next_part.replace('-', '').isdigit()):
+                        return part
+        
+        return None
+    except Exception:
+        return None
 
 
 def add_autograder_cell(notebook_path):
@@ -194,6 +240,14 @@ def process_student_notebook(notebook_filename):
                             except:
                                 pass
             
+            # If names are still unknown, try to extract username from filename
+            if first_name == "Unknown" or last_name == "Unknown":
+                username = extract_username_from_filename(notebook_filename)
+                if username:
+                    # Use username as both first and last name, or split if possible
+                    first_name = username
+                    last_name = username
+            
             # Create CSV line with zeros for all problems
             num_problems = 12
             csv_line = (
@@ -202,13 +256,69 @@ def process_student_notebook(notebook_filename):
                 ",0.00"
             )
         except:
-            # Fallback if we can't extract student info
-            csv_line = f"Unknown,Unknown,Unknown,{','.join(['0'] * 12)},0.00"
+            # Fallback: try to extract username from filename
+            username = extract_username_from_filename(notebook_filename)
+            if username:
+                csv_line = f"{username},{username},Unknown,{','.join(['0'] * 12)},0.00"
+            else:
+                csv_line = f"Unknown,Unknown,Unknown,{','.join(['0'] * 12)},0.00"
         
         return (False, csv_line, "Notebook execution failed or crashed")
     
     if csv_line is None:
-        return (False, None, "Could not extract CSV output")
+        # If CSV output is None but execution succeeded, try to extract student info
+        # This might happen if autograder code had errors but notebook executed
+        try:
+            with open(notebook_path, 'r', encoding='utf-8') as f:
+                notebook = json.load(f)
+            
+            first_name = "Unknown"
+            last_name = "Unknown"
+            student_id = "Unknown"
+            
+            # Try to find student info in cells
+            for cell in notebook.get('cells', []):
+                source = cell.get('source', '')
+                if 'first_name' in source:
+                    for line in source.split('\n'):
+                        if 'first_name' in line and '=' in line:
+                            try:
+                                first_name = line.split('=')[1].strip().strip('"').strip("'")
+                            except:
+                                pass
+                        if 'last_name' in line and '=' in line:
+                            try:
+                                last_name = line.split('=')[1].strip().strip('"').strip("'")
+                            except:
+                                pass
+                        if 'student_id' in line and '=' in line:
+                            try:
+                                student_id = line.split('=')[1].strip().strip('"').strip("'")
+                            except:
+                                pass
+            
+            # If names are still unknown, try to extract username from filename
+            if first_name == "Unknown" or last_name == "Unknown":
+                username = extract_username_from_filename(notebook_filename)
+                if username:
+                    first_name = username
+                    last_name = username
+            
+            # Create CSV line with zeros (autograder didn't produce output)
+            num_problems = 12
+            csv_line = (
+                f"{first_name},{last_name},{student_id}," +
+                ",".join(["0"] * num_problems) +
+                ",0.00"
+            )
+            return (False, csv_line, "Could not extract CSV output from autograder")
+        except:
+            username = extract_username_from_filename(notebook_filename)
+            if username:
+                csv_line = f"{username},{username},Unknown,{','.join(['0'] * 12)},0.00"
+            else:
+                csv_line = f"Unknown,Unknown,Unknown,{','.join(['0'] * 12)},0.00"
+            return (False, csv_line, "Could not extract CSV output")
     
     return (True, csv_line, None)
 
